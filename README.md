@@ -61,6 +61,19 @@ Graphs generated using matplotlib show execution time vs array size:
 * X-axis: Array size
 * Y-axis: Time (seconds)
 
+
+```
+Size | Linear | Binary | Jump | Exponential
+--------------------------------------------------
+ 10000 |     10 |      0 |      1 |      0
+ 20000 |      8 |      0 |      0 |      0
+ 30000 |      2 |      0 |      0 |      0
+ 40000 |     25 |      0 |      1 |      0
+ 50000 |     63 |      0 |      2 |      0
+```
+
+## Graphs
+
 ![comparison](images/comparison_log.png)
 ![comparison](images/comparison_regular.png)
 
@@ -72,13 +85,19 @@ Install coverage: `pip install -r requirements.txt`
 Run: `coverage run -m unittest discover`
 Report: `coverage report`
 
-Size | Linear | Binary | Jump | Exponential
+```
+Name                           Stmts   Miss  Cover
 --------------------------------------------------
- 10000 |     10 |      0 |      1 |      0
- 20000 |      8 |      0 |      0 |      0
- 30000 |      2 |      0 |      0 |      0
- 40000 |     25 |      0 |      1 |      0
- 50000 |     63 |      0 |      2 |      0
+search\__init__.py                 0      0   100%
+search\algorithms.py              47     11    77%
+search\constants.py                2      0   100%
+search\data_generator.py           5      0   100%
+tests\__init__.py                  0      0   100%
+tests\test_algorithms.py          17      0   100%
+tests\test_data_generator.py      15      0   100%
+--------------------------------------------------
+TOTAL                             86     11    87%
+```
 
 ## Code Formatting
 Use: `black . -l 120` (requires black installed)
