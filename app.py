@@ -3,6 +3,10 @@ from search.execution_time_gathering import compare_and_plot_algorithms, take_ex
 
 
 def run_comparison():
+    """
+    Run the comparison of the algorithms
+    :return: None
+    """
     sizes = [10000, 15000, 20000, 25000, 30000, 35000, 40000]
 
     algorithms = {
@@ -16,9 +20,13 @@ def run_comparison():
 
 
 def run_execution_time_test():
-    minimum_size = 10000  # Start larger
-    maximum_size = 50000  # Go up to 1 million
-    step = 10000  # Larger steps
+    """
+    Run the execution time test
+    :return:
+    """
+    minimum_size = 10000
+    maximum_size = 50000
+    step = 10000
     samples_by_size = 7
 
     table = take_execution_time(minimum_size, maximum_size, step, samples_by_size)

@@ -6,8 +6,19 @@ from typing import Dict, List, Callable
 
 from search import data_generator, algorithms, constants
 
+def take_execution_time(minimum_size: int, maximum_size: int, step: int, samples_by_size: int) -> List[List[int]]:
+    """
+    Measure the execution time of search algorithms over a range of input sizes.
 
-def take_execution_time(minimum_size, maximum_size, step, samples_by_size):
+    Args:
+        minimum_size (int): The minimum size of the input array.
+        maximum_size (int): The maximum size of the input array.
+        step (int): The step size to increment the input array size.
+        samples_by_size (int): The number of samples to generate for each input size.
+
+    Returns:
+        List[List[int]]: A table of execution times for each input size and algorithm.
+    """
     return_table = []
     for size in range(minimum_size, maximum_size + 1, step):
         print(f"Processing size: {size}")
@@ -16,8 +27,17 @@ def take_execution_time(minimum_size, maximum_size, step, samples_by_size):
         return_table.append(table_row + times)
     return return_table
 
+def take_times(size: int, samples_by_size: int) -> List[int]:
+    """
+    Generate samples and measure the execution time for each search algorithm.
 
-def take_times(size, samples_by_size):
+    Args:
+        size (int): The size of the input array.
+        samples_by_size (int): The number of samples to generate.
+
+    Returns:
+        List[int]: A list of median execution times for each search algorithm.
+    """
     samples = []
     targets = []
     for _ in range(samples_by_size):
@@ -32,8 +52,18 @@ def take_times(size, samples_by_size):
         take_time_for_algorithm(samples, targets, algorithms.exponential_search),
     ]
 
+def take_time_for_algorithm(samples_array: List[List[int]], targets: List[int], search_approach: Callable[[List[int], int], int]) -> int:
+    """
+    Measure the execution time for a specific search algorithm.
 
-def take_time_for_algorithm(samples_array, targets, search_approach):
+    Args:
+        samples_array (List[List[int]]): A list of input arrays.
+        targets (List[int]): A list of target values to search for.
+        search_approach (Callable[[List[int], int], int]): The search algorithm to measure.
+
+    Returns:
+        int: The median execution time for the search algorithm.
+    """
     times = []
     for sample, target in zip(samples_array, targets):
         # Perform multiple searches to accumulate measurable time
@@ -45,15 +75,32 @@ def take_time_for_algorithm(samples_array, targets, search_approach):
     times.sort()
     return times[len(times) // 2]
 
+def measure_time(func: Callable[[List[int], int], int], arr: List[int], target: int) -> float:
+    """
+    Measure the execution time of a search function.
 
-def measure_time(func: Callable, arr: List[int], target: int) -> float:
+    Args:
+        func (Callable[[List[int], int], int]): The search function to measure.
+        arr (List[int]): The input array.
+        target (int): The target value to search for.
+
+    Returns:
+        float: The average execution time per search.
+    """
     start_time = time.perf_counter()
     for _ in range(1000):  # Repeat 1000 times
         func(arr, target)
     return (time.perf_counter() - start_time) / 1000  # Average per search
 
+def compare_and_plot_algorithms(sizes: List[int], algorithms: Dict[str, Callable[[List[int], int], int]], repetitions: int = 5):
+    """
+    Compare the execution times of different search algorithms and plot the results.
 
-def compare_and_plot_algorithms(sizes: List[int], algorithms: Dict[str, Callable], repetitions: int = 5):
+    Args:
+        sizes (List[int]): A list of input array sizes to test.
+        algorithms (Dict[str, Callable[[List[int], int], int]]): A dictionary of search algorithms to compare.
+        repetitions (int, optional): The number of repetitions for each size. Defaults to 5.
+    """
     results = {name: [] for name in algorithms}
 
     for size in sizes:
