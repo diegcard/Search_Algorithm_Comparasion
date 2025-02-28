@@ -1,7 +1,5 @@
-# search/execution_time_gathering.py
 import random
 import time
-
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, List, Callable

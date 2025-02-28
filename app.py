@@ -16,9 +16,9 @@ def run_comparison():
 
 
 def run_execution_time_test():
-    minimum_size = 10000    # Start larger
-    maximum_size = 50000   # Go up to 1 million
-    step = 10000           # Larger steps
+    minimum_size = 10000  # Start larger
+    maximum_size = 50000  # Go up to 1 million
+    step = 10000  # Larger steps
     samples_by_size = 7
 
     table = take_execution_time(minimum_size, maximum_size, step, samples_by_size)

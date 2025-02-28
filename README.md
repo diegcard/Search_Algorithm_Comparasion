@@ -72,5 +72,13 @@ Install coverage: `pip install -r requirements.txt`
 Run: `coverage run -m unittest discover`
 Report: `coverage report`
 
+Size | Linear | Binary | Jump | Exponential
+--------------------------------------------------
+ 10000 |     10 |      0 |      1 |      0
+ 20000 |      8 |      0 |      0 |      0
+ 30000 |      2 |      0 |      0 |      0
+ 40000 |     25 |      0 |      1 |      0
+ 50000 |     63 |      0 |      2 |      0
+
 ## Code Formatting
 Use: `black . -l 120` (requires black installed)
