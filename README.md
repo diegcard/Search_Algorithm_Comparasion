@@ -1,33 +1,41 @@
-# Search Algorithms Performance Analysis
+# 🔍 Search Algorithms Performance Analysis
 
-### Author: [Diego Cardenas](https://github.com/diegcard)
-### Institution: Escuela Colombiana de Ingeniería Julio Garavito
-### Professor: [Rafael Niquefa](https://github.com/niquefa)
-### Course: Algorithms and Data Representation
-### Date: March 2025
+<div align="center">
 
-## Overview
+![GitHub stars](https://img.shields.io/github/stars/diegcard/search_algorithm_comparison?style=social)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-This project provides a comprehensive analysis of various search algorithms, comparing their time complexity and real-world performance across different array sizes. The study includes both classic and advanced search algorithms with detailed visualizations.
+**A comprehensive analysis of common search algorithms and their performance metrics**
 
-## Featured Algorithms
+</div>
 
-1. **Linear Search**: Sequential search through all elements
-   - Complexity: O(n)
-2. **Binary Search**: Divide-and-conquer on sorted arrays
-   - Complexity: O(log n)
-3. **Jump Search**: Fixed-step jumps with linear backtracking
-   - Complexity: O(√n)
-4. **Exponential Search**: Exponential range growth with binary search
-   - Complexity: O(log n)
-5. **Interpolation Search**: Probabilistic position estimation
-   - Complexity: O(log log n) average, O(n) worst
-6. **Ternary Search**: Three-way partition search
-   - Complexity: O(log₃ n)
+## 📋 Table of Contents
+- [Overview](#-overview)
+- [Algorithms](#-algorithms)
+- [Results](#-results)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Testing & Code Quality](#-testing--code-quality)
+- [Author & Credits](#-author--credits)
 
-## Implementations
+## 🔎 Overview
+
+This project provides an in-depth study of various search algorithms, analyzing their time complexity and real-world performance across different array sizes.
+
+**Algorithms Analyzed:**
+- Linear Search
+- Binary Search
+- Jump Search
+- Exponential Search
+- Interpolation Search
+- Ternary Search
+
+## 🧮 Algorithms
 
 ### Linear Search
+<details>
+<summary>Implementation & Analysis</summary>
 
 ```python
 def linear_search(arr, x):
@@ -37,7 +45,17 @@ def linear_search(arr, x):
     return -1
 ```
 
+**Complexity:**
+- **Time Complexity (Worst):** O(n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(n)
+- **Space Complexity:** O(1)
+
+</details>
+
 ### Binary Search
+<details>
+<summary>Implementation & Analysis</summary>
 
 ```python
 def binary_search(arr, x):
@@ -53,115 +71,137 @@ def binary_search(arr, x):
     return -1
 ```
 
+**Complexity:**
+- **Time Complexity (Worst):** O(log n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(log n)
+- **Space Complexity:** O(1)
+
+</details>
+
 ### Jump Search
+<details>
+<summary>Implementation & Analysis</summary>
 
 ```python
-def jump_search(arr, x):
+import math
+
+def jump_search(arr, target):
     n = len(arr)
-    step = int(n ** 0.5)
+    step = int(math.sqrt(n))
     prev = 0
-    
-    while arr[min(step, n) - 1] < x:
+    while arr[min(step, n) - 1] < target:
         prev = step
-        step += int(n ** 0.5)
+        step += int(math.sqrt(n))
         if prev >= n:
-            return -1
-            
-    while arr[prev] < x:
-        prev += 1
-        if prev == min(step, n):
-            return -1
-            
-    if arr[prev] == x:
-        return prev
-    return -1
+            return None
+    for i in range(prev, min(step, n)):
+        if arr[i] == target:
+            return i
+    return None
+
+
 ```
+
+**Complexity:**
+- **Time Complexity (Worst):** O(√n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(√n)
+- **Space Complexity:** O(1)
+
+</details>
 
 ### Exponential Search
 
-```python
-def binary_search(arr, x):
-    low, high = 0, len(arr) - 1
-    while low <= high:
-        mid = (low + high) // 2
-        if arr[mid] < x:
-            low = mid + 1
-        elif arr[mid] > x:
-            high = mid - 1
-        else:
-            return mid
-    return -1
+<details>
+<summary>Implementation & Analysis</summary>
 
+```python
 def exponential_search(arr, x):
-    n = len(arr)
     if arr[0] == x:
         return 0
-        
     i = 1
-    while i < n and arr[i] <= x:
+    while i < len(arr) and arr[i] <= x:
         i *= 2
-        
-    return binary_search(arr[:min(i, n)], x)
+    return binary_search(arr[:min(i, len(arr))], x)
 ```
 
+**Complexity:**
+- **Time Complexity (Worst):** O(log n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(log n)
+- **Space Complexity:** O(1)
+
+</details>
+
 ### Interpolation Search
+
+<details>
+<summary>Implementation & Analysis</summary>
 
 ```python
 def interpolation_search(arr, x):
     low, high = 0, len(arr) - 1
-    
     while low <= high and arr[low] <= x <= arr[high]:
-        if arr[high] == arr[low]:  # Avoid division by zero
-            pos = low
-        else:
-            pos = low + ((x - arr[low]) * (high - low)) // (arr[high] - arr[low])
-            
+        pos = low + ((high - low) // (arr[high] - arr[low])) * (x - arr[low])
         if arr[pos] == x:
             return pos
-        if arr[pos] < x:
+        elif arr[pos] < x:
             low = pos + 1
         else:
             high = pos - 1
-            
     return -1
 ```
 
+**Complexity:**
+- **Time Complexity (Worst):** O(log log n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(log log n)
+- **Space Complexity:** O(1)
+
+</details>
+
 ### Ternary Search
+
+<details>
+<summary>Implementation & Analysis</summary>
 
 ```python
 def ternary_search(arr, x):
     low, high = 0, len(arr) - 1
-    
     while low <= high:
         mid1 = low + (high - low) // 3
         mid2 = high - (high - low) // 3
-        
         if arr[mid1] == x:
             return mid1
-        if arr[mid2] == x:
+        elif arr[mid2] == x:
             return mid2
-            
-        if x < arr[mid1]:
+        elif x < arr[mid1]:
             high = mid1 - 1
         elif x > arr[mid2]:
             low = mid2 + 1
         else:
             low, high = mid1 + 1, mid2 - 1
-            
     return -1
 ```
 
-## Analysis
+**Complexity:**
+- **Time Complexity (Worst):** O(log n)
+- **Time Complexity (Best):** O(1)
+- **Time Complexity (Average):** O(log n)
+- **Space Complexity:** O(1)
 
-The performance of each algorithm was evaluated across different array sizes, ranging from 10 to 50,000 elements. Both theoretical time complexity and real-world execution times were compared to identify the most efficient algorithms for various scenarios.
+</details>
 
-## Results
 
-The analysis reveals that binary search is the most efficient algorithm for large datasets, with a time complexity of O(log n). However, for small arrays, linear search is the most practical choice due to its simplicity and lower overhead.
 
-## Performance Comparison
+## 📊 Results
+
+### Performance Comparison
 
 The following table shows the execution time (in milliseconds) for each algorithm across different array sizes:
+
+<div align="center">
 
 | Size   | Linear | Binary | Jump | Exp | Interp | Ternary |
 |--------|--------|--------|------|-----|--------|---------|
@@ -170,34 +210,22 @@ The following table shows the execution time (in milliseconds) for each algorith
 | 30000  | 52     | 0      | 0    | 0   | 0      | 0       |
 | 40000  | 73     | 0      | 0    | 0   | 0      | 0       |
 | 50000  | 93     | 0      | 0    | 0   | 0      | 0       |
+| 60000  | 114    | 0      | 0    | 0   | 0      | 0       |
+| 70000  | 134    | 0      | 0    | 0   | 0      | 0       |
+| 80000  | 155    | 0      | 0    | 0   | 0      | 0       |
+| 90000  | 175    | 0      | 0    | 0   | 0      | 0       |
+| 100000 | 196    | 0      | 0    | 0   | 0      | 0       |
 
-## Visualizations
+</div>
 
-![Bar chart comparison](images/comparison_bar_20250321_021929.png)
+### Visualization
 
-![Logarithmic scale comparison](images/comparison_log_20250321_021929.png)
+<div align="center">
+<img src="images/comparison_bar.png" alt="Bar Chart Comparison" width="80%">
+<img src="images/comparison_log.png" alt="Logarithmic Scale Comparison" width="80%">
+</div>
 
-![Regular comparison](images/comparison_regular_20250321_021929.png)
-
-![Logarithmic comparison](images/log_comparison.png)
-
-![Time comparison](images/time_comparison.png)
-
-## Conclusions
-
-The choice of search algorithm depends on the size of the dataset and the expected search time:
-
-- **Binary Search**: Optimal for large sorted arrays
-- **Linear Search**: Preferable for small arrays
-- **Interpolation Search**: Efficient for uniformly distributed data
-- **Ternary Search**: Offers improved performance in specific cases
-
-## Requirements
-
-- Python 3.11+
-- Virtual environment recommended (`virtualenv` or `venv`)
-
-## Setup Instructions
+## ⚙️ Installation
 
 ```bash
 # Clone the repository
@@ -216,7 +244,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-## Project Structure
+## 📂 Project Structure
 
 ```
 search_algorithm_comparison/
@@ -228,3 +256,12 @@ search_algorithm_comparison/
 ├── results/                   # Analysis results
 └── requirements.txt           # Dependencies
 ```
+
+## 👨‍💻 Author & Credits
+
+- **Author:** [Diego Cardenas](https://github.com/diegcard)
+- **Institution:** Escuela Colombiana de Ingeniería Julio Garavito
+- **Professor:** [Rafael Niquefa](https://github.com/niquefa)
+- **Course:** Algorithms and Data Representation
+- **Date:** March 2025
+
