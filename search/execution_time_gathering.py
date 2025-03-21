@@ -3,22 +3,12 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, List, Callable
+from datetime import datetime
 
 from search import data_generator, algorithms, constants
 
+
 def take_execution_time(minimum_size: int, maximum_size: int, step: int, samples_by_size: int) -> List[List[int]]:
-    """
-    Measure the execution time of search algorithms over a range of input sizes.
-
-    Args:
-        minimum_size (int): The minimum size of the input array.
-        maximum_size (int): The maximum size of the input array.
-        step (int): The step size to increment the input array size.
-        samples_by_size (int): The number of samples to generate for each input size.
-
-    Returns:
-        List[List[int]]: A table of execution times for each input size and algorithm.
-    """
     return_table = []
     for size in range(minimum_size, maximum_size + 1, step):
         print(f"Processing size: {size}")
@@ -27,113 +17,97 @@ def take_execution_time(minimum_size: int, maximum_size: int, step: int, samples
         return_table.append(table_row + times)
     return return_table
 
+
 def take_times(size: int, samples_by_size: int) -> List[int]:
-    """
-    Generate samples and measure the execution time for each search algorithm.
-
-    Args:
-        size (int): The size of the input array.
-        samples_by_size (int): The number of samples to generate.
-
-    Returns:
-        List[int]: A list of median execution times for each search algorithm.
-    """
     samples = []
     targets = []
     for _ in range(samples_by_size):
         arr = data_generator.get_random_sorted_list(size)
         samples.append(arr)
         targets.append(random.choice(arr))
-
     return [
         take_time_for_algorithm(samples, targets, algorithms.linear_search),
         take_time_for_algorithm(samples, targets, algorithms.binary_search),
         take_time_for_algorithm(samples, targets, algorithms.jump_search),
         take_time_for_algorithm(samples, targets, algorithms.exponential_search),
+        take_time_for_algorithm(samples, targets, algorithms.interpolation_search),
+        take_time_for_algorithm(samples, targets, algorithms.ternary_search),
     ]
 
-def take_time_for_algorithm(samples_array: List[List[int]], targets: List[int], search_approach: Callable[[List[int], int], int]) -> int:
-    """
-    Measure the execution time for a specific search algorithm.
 
-    Args:
-        samples_array (List[List[int]]): A list of input arrays.
-        targets (List[int]): A list of target values to search for.
-        search_approach (Callable[[List[int], int], int]): The search algorithm to measure.
-
-    Returns:
-        int: The median execution time for the search algorithm.
-    """
+def take_time_for_algorithm(samples_array: List[List[int]], targets: List[int], search_approach: Callable) -> int:
     times = []
     for sample, target in zip(samples_array, targets):
-        # Perform multiple searches to accumulate measurable time
         start_time = time.perf_counter()
-        for _ in range(1000):  # Implementar sample en app.py
-            search_approach(sample, -1) # -1 para el peor caso
-        elapsed = (time.perf_counter() - start_time) * constants.TIME_MULTIPLIER / 1000  # Average per search
+        for _ in range(1000):
+            search_approach(sample, -1)  # Worst case
+        elapsed = (time.perf_counter() - start_time) * constants.TIME_MULTIPLIER / 1000
         times.append(int(elapsed))
     times.sort()
     return times[len(times) // 2]
 
-def measure_time(func: Callable[[List[int], int], int], arr: List[int], target: int) -> float:
-    """
-    Measure the execution time of a search function.
 
-    Args:
-        func (Callable[[List[int], int], int]): The search function to measure.
-        arr (List[int]): The input array.
-        target (int): The target value to search for.
-
-    Returns:
-        float: The average execution time per search.
-    """
+def measure_time(func: Callable, arr: List[int], target: int) -> float:
     start_time = time.perf_counter()
-    for _ in range(1000):  # Repeat 1000 times
+    for _ in range(1000):
         func(arr, target)
-    return (time.perf_counter() - start_time) / 1000  # Average per search
+    return (time.perf_counter() - start_time) / 1000
 
-def compare_and_plot_algorithms(sizes: List[int], algorithms: Dict[str, Callable[[List[int], int], int]], repetitions: int = 5):
-    """
-    Compare the execution times of different search algorithms and plot the results.
 
-    Args:
-        sizes (List[int]): A list of input array sizes to test.
-        algorithms (Dict[str, Callable[[List[int], int], int]]): A dictionary of search algorithms to compare.
-        repetitions (int, optional): The number of repetitions for each size. Defaults to 5.
-    """
+def compare_and_plot_algorithms(sizes: List[int], algorithms: Dict[str, Callable], repetitions: int = 5):
     results = {name: [] for name in algorithms}
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+    # Gather data
     for size in sizes:
         print(f"Testing size {size}")
         data = data_generator.get_random_sorted_list(size)
         target = random.choice(data)
         for name, func in algorithms.items():
-            times = []
-            for _ in range(repetitions):
-                execution_time = measure_time(func, data, target)
-                times.append(execution_time)
+            times = [measure_time(func, data, target) for _ in range(repetitions)]
             results[name].append(np.mean(times))
 
-    # Regular plot
-    plt.figure(figsize=(10, 6))
+    # Enhanced Regular Plot
+    plt.figure(figsize=(12, 7))
     for name, times in results.items():
-        plt.plot(sizes, times, marker="o", label=name)
-    plt.xlabel("Array Size")
-    plt.ylabel("Time (seconds)")
-    plt.title("Search Algorithms Comparison")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig("comparison_regular.png")
+        plt.plot(sizes, times, marker='o', linewidth=2, label=name)
+    plt.xlabel("Array Size", fontsize=12)
+    plt.ylabel("Time (seconds)", fontsize=12)
+    plt.title("Search Algorithms Comparison", fontsize=14, pad=15)
+    plt.legend(fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig(f"images/comparison_regular_{timestamp}.png", dpi=300)
     plt.close()
 
-    # Logarithmic plot
-    plt.figure(figsize=(10, 6))
+    # Enhanced Logarithmic Plot
+    plt.figure(figsize=(12, 7))
     for name, times in results.items():
-        plt.loglog(sizes, times, marker="o", label=name)
-    plt.xlabel("Array Size (log)")
-    plt.ylabel("Time (seconds) (log)")
-    plt.title("Search Algorithms Comparison (Log Scale)")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig("comparison_log.png")
+        plt.loglog(sizes, times, marker='o', linewidth=2, label=name)
+    plt.xlabel("Array Size (log scale)", fontsize=12)
+    plt.ylabel("Time (seconds, log scale)", fontsize=12)
+    plt.title("Search Algorithms Comparison (Log Scale)", fontsize=14, pad=15)
+    plt.legend(fontsize=10)
+    plt.grid(True, which="both", linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig(f"images/comparison_log_{timestamp}.png", dpi=300)
+    plt.close()
+
+    # Bar Plot for Key Sizes
+    key_sizes = [sizes[0], sizes[len(sizes) // 2], sizes[-1]]
+    bar_results = {name: [results[name][i] for i in [0, len(sizes) // 2, -1]] for name in algorithms}
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    bar_width = 0.12
+    x = np.arange(len(key_sizes))
+    for i, (name, times) in enumerate(bar_results.items()):
+        plt.bar(x + i * bar_width, times, bar_width, label=name)
+    plt.xlabel("Array Size", fontsize=12)
+    plt.ylabel("Time (seconds)", fontsize=12)
+    plt.title("Algorithm Performance at Key Sizes", fontsize=14, pad=15)
+    plt.xticks(x + bar_width * (len(algorithms) - 1) / 2, key_sizes)
+    plt.legend(fontsize=10)
+    plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig(f"images/comparison_bar_{timestamp}.png", dpi=300)
     plt.close()
