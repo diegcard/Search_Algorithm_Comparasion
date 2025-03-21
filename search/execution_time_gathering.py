@@ -68,8 +68,8 @@ def take_time_for_algorithm(samples_array: List[List[int]], targets: List[int], 
     for sample, target in zip(samples_array, targets):
         # Perform multiple searches to accumulate measurable time
         start_time = time.perf_counter()
-        for _ in range(1000):  # Repeat 1000 times
-            search_approach(sample, target)
+        for _ in range(1000):  # Implementar sample en app.py
+            search_approach(sample, -1) # -1 para el peor caso
         elapsed = (time.perf_counter() - start_time) * constants.TIME_MULTIPLIER / 1000  # Average per search
         times.append(int(elapsed))
     times.sort()
